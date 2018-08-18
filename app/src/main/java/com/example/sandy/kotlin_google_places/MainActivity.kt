@@ -8,8 +8,16 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.widget.ArrayAdapter
+import android.widget.Toast
+import com.example.sandy.kotlin_google_places.beans.PlacesBean
 import com.google.android.gms.location.places.ui.PlacePicker
 import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 class MainActivity : AppCompatActivity() {
 
@@ -21,6 +29,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+       /* getting current location by network provider*/
         var lManager = getSystemService(Context.LOCATION_SERVICE)
                 as LocationManager
         lManager.requestLocationUpdates(
@@ -51,12 +60,51 @@ class MainActivity : AppCompatActivity() {
 
         })
 
-        //location picker (manually)
+        /* location picker (manually) */
         loc_pin.setOnClickListener {
 
             val builder = PlacePicker.IntentBuilder()
             startActivityForResult(builder.build(this@MainActivity),
                     1)
+        }
+
+        get_places.setOnClickListener {
+
+            var r = Retrofit.Builder().
+                    baseUrl("https://maps.googleapis.com/").
+                    addConverterFactory(GsonConverterFactory.create()).
+                    build()
+
+            var api = r.create(PlacesAPI::class.java)
+
+            var call = api.getPlaces("$lati,$longi",sp1.selectedItem.toString())
+
+            call.enqueue(object : Callback<PlacesBean> {
+                override fun onResponse(call: Call<PlacesBean>?,
+                                        response: Response<PlacesBean>?) {
+
+                    var bean = response!!.body()
+
+                    var list = bean!!.results
+
+                    var temp_list = mutableListOf<String>()
+
+                    for(item in list!!){
+                        temp_list.add(item.name+"\n"+item.vicinity)
+                    }
+
+                    var adapter = ArrayAdapter<String>(this@MainActivity,
+                            android.R.layout.simple_list_item_single_choice, temp_list)
+
+                    lview.adapter = adapter
+                }
+
+                override fun onFailure(call: Call<PlacesBean>?, t: Throwable?) {
+                    Toast.makeText(this@MainActivity,"Exception is Raised...",
+                            Toast.LENGTH_LONG).show()
+                }
+            })
+
         }
     }
 
