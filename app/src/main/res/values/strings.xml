@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Kotlin-Google-Places</string>
+
+    <string-array name="types">
+
+        <item>select</item>
+        <item>atm</item>
+        <item>hospital</item>
+        <item>shopping_mall</item>
+        <item>bus_station</item>
+        <item>supermarket</item>
+        <item>police</item>
+
+    </string-array>
+</resources>
