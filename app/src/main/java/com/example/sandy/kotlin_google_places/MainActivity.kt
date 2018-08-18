@@ -1,6 +1,7 @@
 package com.example.sandy.kotlin_google_places
 
 import android.annotation.SuppressLint
+import android.app.ProgressDialog
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -24,10 +25,14 @@ class MainActivity : AppCompatActivity() {
     var lati: Double? = null
     var longi: Double? = null
 
+    var mLoginProgress: ProgressDialog? = null
+
     @SuppressLint("MissingPermission")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        mLoginProgress = ProgressDialog(this)
 
        /* getting current location by network provider*/
         var lManager = getSystemService(Context.LOCATION_SERVICE)
@@ -68,7 +73,13 @@ class MainActivity : AppCompatActivity() {
                     1)
         }
 
+        /* Initializing the Retrofit object to hit Google Places */
         get_places.setOnClickListener {
+
+            mLoginProgress!!.setTitle("Gathering information")
+            mLoginProgress!!.setMessage("Please wait while we check")
+            mLoginProgress!!.setCanceledOnTouchOutside(false)
+            mLoginProgress!!.show()
 
             var r = Retrofit.Builder().
                     baseUrl("https://maps.googleapis.com/").
@@ -97,9 +108,14 @@ class MainActivity : AppCompatActivity() {
                             android.R.layout.simple_list_item_single_choice, temp_list)
 
                     lview.adapter = adapter
+
+                    mLoginProgress!!.dismiss()
                 }
 
                 override fun onFailure(call: Call<PlacesBean>?, t: Throwable?) {
+
+                    mLoginProgress!!.dismiss()
+
                     Toast.makeText(this@MainActivity,"Exception is Raised...",
                             Toast.LENGTH_LONG).show()
                 }
