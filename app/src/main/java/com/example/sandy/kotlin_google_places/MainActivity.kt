@@ -9,11 +9,16 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.BaseAdapter
 import android.widget.Toast
 import com.example.sandy.kotlin_google_places.beans.PlacesBean
 import com.google.android.gms.location.places.ui.PlacePicker
 import kotlinx.android.synthetic.main.activity_main.*
+import kotlinx.android.synthetic.main.indiview.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -98,16 +103,43 @@ class MainActivity : AppCompatActivity() {
 
                     var list = bean!!.results
 
-                    var temp_list = mutableListOf<String>()
+                  /*  var temp_list = mutableListOf<String>()
 
                     for(item in list!!){
                         temp_list.add(item.name+"\n"+item.vicinity)
                     }
 
                     var adapter = ArrayAdapter<String>(this@MainActivity,
-                            android.R.layout.simple_list_item_single_choice, temp_list)
+                            android.R.layout.simple_list_item_1, temp_list)*/
 
-                    lview.adapter = adapter
+                    lview.adapter = object : BaseAdapter() {
+                        override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
+
+                            var inflater = LayoutInflater.from(this@MainActivity)
+                            var view = inflater.inflate(R.layout.indiview,null)
+                            view.name.text = list!!.get(position).name
+                            view.address.text = list!!.get(position).vicinity
+
+                            return view
+                        }
+
+                        override fun getItem(position: Int): Any {
+
+                            return 0
+                        }
+
+                        override fun getItemId(position: Int): Long {
+
+                            return 0
+                        }
+
+                        override fun getCount(): Int {
+
+                            return list.count()
+                        }
+
+
+                    }
 
                     mLoginProgress!!.dismiss()
                 }

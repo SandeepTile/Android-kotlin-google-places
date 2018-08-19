@@ -44,7 +44,10 @@
         android:layout_height="0dp"
         android:layout_weight="0.1"
         android:id="@+id/sp1"
-        android:entries="@array/types"/>
+        android:textAlignment="center"
+        android:entries="@array/types"
+        android:background="@drawable/border"
+        android:layout_margin="5dp"/>
     <Button
         android:layout_width="wrap_content"
         android:layout_height="0dp"
