@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter
 import android.widget.BaseAdapter
 import android.widget.Toast
 import com.example.sandy.kotlin_google_places.beans.PlacesBean
+import com.example.sandy.kotlin_google_places.beans.Result
 import com.google.android.gms.location.places.ui.PlacePicker
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.indiview.view.*
@@ -24,6 +25,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+
+var list_new :List<Result>? = null
 
 class MainActivity : AppCompatActivity() {
 
@@ -103,6 +106,14 @@ class MainActivity : AppCompatActivity() {
 
                     var list = bean!!.results
 
+                    show_all.setOnClickListener {
+                        var i = Intent(this@MainActivity,
+                                MapsActivity::class.java )
+                        i.putExtra("from_showall",true)
+                        list_new = list
+                        startActivity(i)
+                    }
+
                   /*  var temp_list = mutableListOf<String>()
 
                     for(item in list!!){
@@ -119,6 +130,20 @@ class MainActivity : AppCompatActivity() {
                             var view = inflater.inflate(R.layout.indiview,null)
                             view.name.text = list!!.get(position).name
                             view.address.text = list!!.get(position).vicinity
+
+                            view.b1.setOnClickListener {
+
+                                var i = Intent(this@MainActivity,MapsActivity::class.java)
+
+                                i.putExtra("latitude",list.get(position).geometry.location.lat)
+
+                                i.putExtra("longitude",list.get(position).geometry.location.lng)
+
+                                i.putExtra("from_showall",false)
+
+                                startActivity(i)
+
+                            }
 
                             return view
                         }
